@@ -109,9 +109,21 @@
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Admin">
-                            <i class="icon-grid menu-icon"></i>
-                            <span class="menu-title">Dashboard</span>
+                        <a class="nav-link gap-2 d-flex" asp-controller="Admin" asp-action="Index">
+                            <i class="mdi mdi-view-dashboard" style="font-size:large"></i>
+                            <span class="menu-title ml-2">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link gap-2 d-flex" asp-controller="Admin" asp-action="RoomBooking">
+                            <i class="mdi mdi-book" style="font-size:large"></i>
+                            <span class="menu-title ml-2">RoomBooking</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link gap-2 d-flex" asp-controller="Home" asp-action="Admin">
+                            <i class="mdi mdi-view-dashboard" style="font-size:large"></i>
+                            <span class="menu-title ml-2">Room</span>
                         </a>
                     </li>
                 </ul>
@@ -160,10 +172,14 @@
     <script src="~/admin_js/todolist.js"></script>
     <script src="~/admin_js/calendar.js"></script>
     <script src="~/admin_js/lib/main.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendors/mdi/css/materialdesignicons.min.css"></script>
 
     <!-- endinject -->
     <!-- Custom js for this page-->
     <script src="~/admin_js/file-upload.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
     @*<script src="~/admin_js/toastinette.js"></script>*@
     <!-- End custom js for this page-->
 </body>
