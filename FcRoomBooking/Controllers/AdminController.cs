@@ -17,13 +17,6 @@ namespace FcRoomBooking.Controllers
         {
             return View();
         }
-        public IActionResult RoomBooking()
-        {
-            return View();
-        }
-        public async Task<IActionResult> CreateRoomBooking()
-        {
-            return View();
-        }
+        
     }
 }

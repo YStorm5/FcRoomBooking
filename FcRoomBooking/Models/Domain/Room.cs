@@ -12,7 +12,7 @@ namespace FcRoomBooking.Models.Domain
         public string? RoomDescription { get; set; }
         public byte[]? RoomImage { get; set; }
         [ForeignKey("RoomStatus")]
-        public int RoomStatusId { get; set; }
+        public int? RoomStatusId { get; set; }
         public RoomStatus RoomStatus { get; set; }
 
     }

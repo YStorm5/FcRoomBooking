@@ -18,6 +18,7 @@ namespace FcRoomBooking.Models.Domain
         public string? Detail { get; set; }
         public DateTime BookingFrom { get; set; }
         public DateTime BookingTo { get; set; }
+        public string BookingStatus { get; set; }
         [NotMapped]
         public List<Participant> Participant { get; set; }
         

@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "_LayoutAdmin";
+}
+<div class="col-lg-12 d-flex flex-column grid-margin stretch-card bg-white p-4 rounded shadow-sm">
+    <div class="card-body">
+        <h4 class="card-title mb-5">Create RoomBooking</h4>
+        <form class="forms-sample" asp-controller="RoomBooking" asp-action="Insert" method="post" autocomplete="off" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="exampleInputUsername1">Book By</label>
+                <input type="text" class="form-control" id="exampleInputUsername1" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputUsername1">Room Name</label>
+                <select class="form-control" asp-items="@ViewBag.roomList" required>
+                    <option value="noselectedvalue">---</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputUsername1">Booking From</label>
+                <input type="datetime-local" class="form-control" id="exampleInputUsername1" required>
+
+            </div>
+            <div class="form-group">
+                <label for="exampleInputUsername1">Booking To</label>
+                <input type="datetime-local" class="form-control" id="exampleInputUsername1" required>
+
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputUsername1">Subject</label>
+                <input type="text" class="form-control" id="exampleInputUsername1" required>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputUsername1">Detail</label>
+                <input type="t" class="form-control" id="exampleInputUsername1" required>
+            </div>
+            <button type="submit" class="btn btn-primary mr-2">Submit</button>
+            <a class="btn btn-light" asp-controller="RoomBooking" asp-action="index">Cancel</a>
+        </form>
+    </div>
+</div>
