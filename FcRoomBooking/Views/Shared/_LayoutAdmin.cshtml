@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="~/admin_js/lib/main.css" />
     @*<link rel="stylesheet" href="~/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
     <link rel="stylesheet" href="~/vendors/ti-icons/css/themify-icons.css">*@
-    <link rel="stylesheet" type="text/css" href="~/admin_js/select.dataTables.min.css">
+    @*<link rel="stylesheet" type="text/css" href="~/admin_js/select.dataTables.min.css">*@
+    <link rel="stylesheet" href="~/lib/toast/jquery.toast.min.css" />
+
 
     <!-- End plugin css for this page -->
     <!-- inject:css -->
@@ -119,6 +121,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link gap-2 d-flex" asp-controller="MyBooking" asp-action="Index">
+                            <i class="mdi mdi-book" style="font-size:large"></i>
+                            <span class="menu-title ml-2">My Booking</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link gap-2 d-flex" asp-controller="Room" asp-action="Index">
                             <i class="mdi mdi-view-dashboard" style="font-size:large"></i>
                             <span class="menu-title ml-2">Room</span>
@@ -128,7 +136,7 @@
             </nav>
             <!-- partial -->
             <div class="main-panel">
-                <div class="content-wrapper">
+                <div class="content-wrapper" style="padding:30px">
                     <div class="row">
                         @RenderBody()
                     </div>
@@ -165,7 +173,6 @@
     <script src="~/admin_js/template.js"></script>
     <script src="~/admin_js/settings.js"></script>
     <script src="~/admin_js/todolist.js"></script>
-    <script src="~/admin_js/calendar.js"></script>
     <script src="~/admin_js/lib/main.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/vendors/mdi/css/materialdesignicons.min.css"></script>

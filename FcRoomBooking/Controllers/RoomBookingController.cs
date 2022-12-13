@@ -4,6 +4,7 @@ using FcRoomBooking.Models.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace FcRoomBooking.Controllers
 {
@@ -13,7 +14,7 @@ namespace FcRoomBooking.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public RoomBookingController(ApplicationDbContext dbContext,UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager)
+        public RoomBookingController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             this.dbContext = dbContext;
             this.userManager = userManager;
@@ -21,79 +22,29 @@ namespace FcRoomBooking.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var list = dbContext.RoomBookings.Include(x => x.Room).Include(x => x.ApplicationUser).Where(x=>x.BookingStatus =="Active" || x.BookingStatus == "Ongoing").ToList();
+            return View(list);
         }
-        public IActionResult Create()
+        public IActionResult Participant(int id)
         {
-            ViewBag.TimeList = TimePicker();
-            ViewBag.roomList = RoomList();
-            return View();
-        }
-        public IActionResult Participant()
-        {
-            return View();
-        }
-        public IActionResult Edit()
-        {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Post(RoomBookingViewModel Request)
-        {
-            DateTime dateFrom = DateTime.Parse(Request.BookingFrom +" "+ Request.BookingFromTime);
-            DateTime dateTo = DateTime.Parse(Request.BookingTo + " " + Request.BookingToTime);
-            var user = await userManager.GetUserAsync(User);
-            await dbContext.RoomBookings.AddAsync(new RoomBooking()
+            var list = dbContext.Participants.Include(x=>x.ApplicationUser).ToList().FindAll(x => x.RoomBookingId == id);
+            var newlist = new List<ParticipantViewModel>();
+            if (list.Any())
             {
-                RoomId = Request.RoomId,
-                UserId = user.Id,
-                Subject = Request.Subject,
-                Detail= Request.Detail,
-                BookingFrom= dateFrom,
-                BookingTo= dateTo,
-                BookingStatus = "Active"
-            });
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Update()
-        {
-            return View();
-        }
-        public IActionResult Delete()
-        {
-            return View();
-        }
-
-        public List<SelectListItem> TimePicker()
-        {
-            List<SelectListItem> List = new List<SelectListItem>();
-            for (int i = 0; i < 24; i++)
-            {
-                for(float y = 0; y < 31; y += 30)
+                foreach (var item in list)
                 {
-                    List.Add(new SelectListItem
+                    newlist.Add(new ParticipantViewModel
                     {
-                        Text = $"{i}:{(y!=0?y:"00")}",
-                        Value = $"{i}:{y}"
+                        RoomBookingId = id,
+                        Username = item.ApplicationUser.UserName,
+                        Email = item.ApplicationUser.Email,
+
                     });
                 }
+                ViewBag.BookingId = id;
             }
-            return List;
-        }
-        public List<SelectListItem> RoomList()
-        {
-            List<SelectListItem> List = new List<SelectListItem>();
-            var roomList = dbContext.Rooms.ToList();
-            foreach (var item in roomList)
-            {
-                List.Add(new SelectListItem
-                {
-                    Text = item.RoomName,
-                    Value = item.Id.ToString()
-                });
-            }
-            return List;
+                return View(newlist);
+
         }
     }
 }

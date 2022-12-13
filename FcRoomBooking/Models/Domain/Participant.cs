@@ -1,13 +1,14 @@
 ﻿using FcRoomBooking.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcRoomBooking.Models.Domain
 {
-    [Keyless]
     public class Participant
     {
-        
+        [Key]
+        public int Id { get; set; }
         [ForeignKey("ApplicationUser")]
         public string UserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
