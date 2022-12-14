@@ -16,6 +16,19 @@
         </div>
     </div>
     </div>
+<div class="card" id="cardHover" style="width: 18rem;position:absolute;z-index:99999;display:none;border:1px black solid">
+  <div class="card-body">
+    <h5 class="card-title" id="title">Card title</h5>
+    <div id="pText">Hello world</div>
+  </div>
+</div>
+<style>
+    .fc-daygrid-event{
+        margin:5px;
+        cursor:pointer;
+        padding:3px;
+    }
+</style>
     <link href="~/lib/calendar/main.css" rel="stylesheet"/>
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/calendar/main.js"></script>
@@ -28,19 +41,46 @@
                 center:'title',
                 end: 'dayGridMonth,timeGridWeek,timeGridDay' // buttons for switching between views
             },
+
             views: {
                 timeGridDay: {
                 type: 'timeGridDay',
-                buttonText: 'day'
+                buttonText: 'day',
+                    nowIndicator: true,
                 },
                 timeGridWeek:{
                     type:'timeGridWeek',
                     buttonText:'Week',
+                    nowIndicator: true,
                 }
             },
+            selectable:true,
+            unselectAuto:true,
+            dateClick: function (info) {
+                window.open("/mybooking/create?date="+info.dateStr);
+                
+            },
+            eventMouseEnter: function (info) {
+                var eventObj = info.event;
+                $('#cardHover').show();
+                $('#cardHover').offset({ top: info.jsEvent.pageY+30, left: info.jsEvent.pageX-100 });
+                $("#title").text(eventObj.start.toLocaleTimeString()+" - "+eventObj.end.toLocaleTimeString());
+                $('#pText').html('<b>Subject: </b>'+eventObj.title+'<br><b>Detail: </b>'+eventObj.extendedProps.detail+'<br><b>Book By: </b>'+eventObj.extendedProps.bookby+'<br><b>Room: </b>'+eventObj.extendedProps.room);
+                
+            },
+            eventMouseLeave:function(info){
+                $('#cardHover').hide();
+            },
             initialView: 'dayGridMonth',
+            displayEventEnd:true,
             height: 800,
             events: '@Url.RouteUrl(new{ action="GetData",controller="Admin"})',
+            
+            eventTimeFormat: { // like '14:30:00'
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false,
+            },
         });
         calendar.render();
       });

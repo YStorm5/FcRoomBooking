@@ -28,10 +28,43 @@ namespace FcRoomBooking.Controllers
             var list = dbContext.RoomBookings.Include(x=>x.Room).Include(x=>x.ApplicationUser).Where(x=>x.UserId == user).ToList();
             return View(list);
         }
-        public IActionResult Create()
+        public IActionResult Create(string? date)
         {
             ViewBag.TimeList = TimePicker();
             ViewBag.roomList = RoomList();
+            ViewBag.partList = ParticipantList();
+            ViewBag.BookingId = TempData["RoomBookingId"];
+            if(ViewBag.BookingId != null)
+            {
+                int id = (int)TempData["RoomBookingId"];
+                var room = dbContext.RoomBookings.FirstOrDefault(x => x.Id == id);
+                var newRoom = new RoomBookingViewModel()
+                {
+                    Id = room.Id,
+                    RoomId = room.RoomId,
+                    RoomName = room.Room.RoomName,
+                    Subject = room.Subject,
+                    Detail = room.Detail,
+                    UserId = room.UserId,
+                    BookingFrom = room.BookingFrom.ToString("yyyy-MM-dd"),
+                    BookingFromTime = room.BookingFrom.ToShortTimeString().Substring(0, 5).Trim(),
+                    BookingTo = room.BookingTo.ToString("yyyy-MM-dd"),
+                    BookingToTime = room.BookingTo.ToShortTimeString().Substring(0, 5).Trim()
+                };
+                return View(newRoom);
+            }
+            else
+            {
+                if (date != null)
+                {
+                    var newRoom = new RoomBookingViewModel()
+                    {
+                        BookingFrom = date,
+                        BookingTo = date,
+                    };
+                    return View(newRoom);
+                }
+            }
             return View();
         }
         public IActionResult Participant(int id)
@@ -91,7 +124,6 @@ namespace FcRoomBooking.Controllers
             var room = dbContext.RoomBookings.FirstOrDefault(x=>x.Id == id);
             ViewBag.TimeList = TimePicker();
             ViewBag.roomList = RoomList();
-            var tang = room.BookingFrom.ToShortTimeString();
             var newRoom = new RoomBookingViewModel()
             {
                 Id = room.Id,
@@ -113,26 +145,37 @@ namespace FcRoomBooking.Controllers
             DateTime dateFrom = DateTime.Parse(Request.BookingFrom +" "+ Request.BookingFromTime);
             DateTime dateTo = DateTime.Parse(Request.BookingTo + " " + Request.BookingToTime);
             var user = await userManager.GetUserAsync(User);
-            await dbContext.RoomBookings.AddAsync(new RoomBooking()
+            var check = await dbContext.RoomBookings.FirstOrDefaultAsync(x => x.BookingFrom <= dateTo && x.BookingTo >= dateFrom && x.RoomId == Request.RoomId && x.BookingStatus == "Active");
+            if(check == null)
             {
-                Id = Request.Id,
-                RoomId = Request.RoomId,
-                UserId = user.Id,
-                Subject = Request.Subject,
-                Detail= Request.Detail,
-                BookingFrom= dateFrom,
-                BookingTo= dateTo,
-                BookingStatus = "Active"
-            });
-            dbContext.SaveChanges();
-            TempData["isCreated"] = true;
-            return RedirectToAction("Index");
+                await dbContext.RoomBookings.AddAsync(new RoomBooking()
+                {
+                    Id = Request.Id,
+                    RoomId = Request.RoomId,
+                    UserId = user.Id,
+                    Subject = Request.Subject,
+                    Detail = Request.Detail,
+                    BookingFrom = dateFrom,
+                    BookingTo = dateTo,
+                    BookingStatus = "Active"
+                });
+                dbContext.SaveChanges();
+                TempData["isCreated"] = true;
+                var room = dbContext.RoomBookings.FirstOrDefaultAsync(x => x.RoomId == Request.RoomId && x.UserId == user.Id && x.BookingFrom == dateFrom && x.BookingTo == dateTo && x.Subject == Request.Subject).Result;
+                TempData["RoomBookingId"] = room.Id;
+                return RedirectToAction("Create");
+            }
+            else
+            {
+                TempData["notAvailable"] = true;
+                return RedirectToAction("Create");
+            }
         }
         public async Task<IActionResult> Remove(string id,int url)
         {
             var user = await dbContext.Participants.FirstOrDefaultAsync(x=>x.ApplicationUser.UserName== id);
             dbContext.Participants.Remove(user);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             TempData["isRemoved"] = true;
             return RedirectToAction("Participant",new {id=url});
         }
@@ -148,16 +191,29 @@ namespace FcRoomBooking.Controllers
             {
                 if (booking != null)
                 {
-                    booking.RoomId = Request.RoomId;
-                    booking.Subject = Request.Subject;
-                    booking.Detail = Request.Detail;
-                    booking.BookingFrom = DateTime.Parse(Request.BookingFrom + " " + Request.BookingFromTime);
-                    booking.BookingTo = DateTime.Parse(Request.BookingTo + " " + Request.BookingToTime);
+                    DateTime dateFrom = DateTime.Parse(Request.BookingFrom + " " + Request.BookingFromTime);
+                    DateTime dateTo = DateTime.Parse(Request.BookingTo + " " + Request.BookingToTime);
+                    var check =  dbContext.RoomBookings.FirstOrDefault(x => x.BookingFrom <= dateTo && x.BookingTo >= dateFrom && x.RoomId == Request.RoomId && x.BookingStatus == "Active");
+                    if(check == null)
+                    {
+                        booking.RoomId = Request.RoomId;
+                        booking.Subject = Request.Subject;
+                        booking.Detail = Request.Detail;
+                        booking.BookingFrom = dateFrom;
+                        booking.BookingTo = dateTo;
+                        dbContext.SaveChanges();
+                        TempData["isUpdated"] = true;
+                        return RedirectToAction("index");
+                    }
+                    else
+                    {
+                        TempData["notAvailable"] = true;
+                        return RedirectToAction("Edit", new {id=Request.Id});
+                    }
                 }
+                return NotFound();
             }
-            dbContext.SaveChanges();
-            TempData["isUpdated"] = true;
-            return RedirectToAction("index");
+            return NotFound();
         }
         public IActionResult Delete(int id)
         {
