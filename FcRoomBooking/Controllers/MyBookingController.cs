@@ -22,12 +22,21 @@ namespace FcRoomBooking.Controllers
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
+        
         public IActionResult Index()
         {
             var user = userManager.GetUserId(User);
             var list = dbContext.RoomBookings.Include(x=>x.Room).Include(x=>x.ApplicationUser).Where(x=>x.UserId == user).ToList();
             return View(list);
         }
+        [HttpGet("MyBooking/{filter}")]
+        public IActionResult Index(string filter)
+        {
+            var user = userManager.GetUserId(User);
+            var list = dbContext.RoomBookings.Include(x=>x.Room).Include(x=>x.ApplicationUser).Where(x=>x.UserId == user && x.BookingStatus == filter).ToList();
+            return View(list);
+        }
+        [HttpGet("MyBooking/Create")]
         public IActionResult Create(string? date)
         {
             ViewBag.TimeList = TimePicker();
@@ -182,10 +191,13 @@ namespace FcRoomBooking.Controllers
         [HttpPost]
         public IActionResult Update(RoomBookingViewModel Request,int id,string? isCancel)
         {
-            var booking = dbContext.RoomBookings.FirstOrDefault(x=>x.Id == Request.Id);
+            var booking = dbContext.RoomBookings.FirstOrDefault(x=>x.Id == id);
             if(isCancel == "true")
             {
                 booking.BookingStatus = "Cancelled";
+                dbContext.SaveChanges();
+                TempData["isCancel"] = true; 
+                return RedirectToAction("Index");
             }
             else
             {
@@ -213,7 +225,6 @@ namespace FcRoomBooking.Controllers
                 }
                 return NotFound();
             }
-            return NotFound();
         }
         public IActionResult Delete(int id)
         {

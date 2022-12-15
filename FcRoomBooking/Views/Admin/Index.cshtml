@@ -57,7 +57,7 @@
             selectable:true,
             unselectAuto:true,
             dateClick: function (info) {
-                window.open("/mybooking/create?date="+info.dateStr);
+                window.open("/mybooking/create?date=" + info.dateStr, "_self");
                 
             },
             eventMouseEnter: function (info) {
@@ -80,6 +80,7 @@
                 hour: '2-digit',
                 minute: '2-digit',
                 meridiem: false,
+                hour12: false,
             },
         });
         calendar.render();

@@ -69,7 +69,24 @@
                             @item.BookingTo
                         </td>
                         <td>
-                            <div class="badge badge-primary badge-pill">@item.BookingStatus</div>
+                            @{
+                                if(item.BookingStatus == "Active")
+                                {
+                                    <div class="badge badge-primary badge-pill">@item.BookingStatus</div>
+                                }
+                                else if(item.BookingStatus == "Ongoing")
+                                {
+                                    <div class="badge badge-success badge-pill">@item.BookingStatus</div>
+                                }
+                                else if(item.BookingStatus == "Finish")
+                                {
+                                    <div class="badge badge-info badge-pill">@item.BookingStatus</div>
+                                }
+                                else
+                                {
+                                    <div class="badge badge-danger badge-pill">@item.BookingStatus</div>
+                                }
+                            }
                         </td>
                         <td>
                             <a class="btn btn-outline-info p-2" asp-controller="RoomBooking" asp-action="Participant" asp-route-id="@item.Id">Participant</a>

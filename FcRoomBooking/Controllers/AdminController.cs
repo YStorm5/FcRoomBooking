@@ -1,4 +1,5 @@
 ﻿using FcRoomBooking.Areas.Identity.Data;
+using FcRoomBooking.Models.Domain;
 using FcRoomBooking.Models.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,24 @@ namespace FcRoomBooking.Controllers
         {
             this.dbContext = dbContext;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var checkActive = await dbContext.RoomBookings.Where(x=>x.BookingTo<DateTime.Now && x.BookingStatus == "Active").ToListAsync();
+            var checkOngoing = await dbContext.RoomBookings.FirstOrDefaultAsync(x => x.BookingFrom <= DateTime.Now && x.BookingTo >= DateTime.Now);
+            if (checkActive.Any())
+            {
+                foreach (var item in checkActive)
+                {
+                    item.BookingStatus = "Finish";
+                    await dbContext.SaveChangesAsync();
+                }
+                return View();
+            }
+            if (checkOngoing != null)
+            {
+                checkOngoing.BookingStatus = "Ongoing";
+                await dbContext.SaveChangesAsync();
+            }
             return View();
         }
         public JsonResult GetData()
@@ -25,15 +42,15 @@ namespace FcRoomBooking.Controllers
             var events = dbContext.RoomBookings.Where(x=>x.BookingStatus == "Active" || x.BookingStatus == "Ongoing").Include(x=>x.ApplicationUser).Include(x=>x.Room).ToList();
             foreach (var item in events)
             {
-                var startTime = item.BookingFrom.ToString("hh:mm");
-                var endTime = item.BookingTo.ToString("hh:mm");
+                var startTime = item.BookingFrom.ToString("HH:mm");
+                var endTime = item.BookingTo.ToString("HH:mm");
                 eventList.Add(new EventViewModel
                 {
                     Id = item.Id,
                     title = item.Subject,
                     start = item.BookingFrom.ToString("yyyy-MM-dd").Trim()+"T"+startTime,
                     end = item.BookingTo.ToString("yyyy-MM-dd").Trim()+"T"+endTime,
-                    color = (item.BookingStatus == "Active"? "green" : (item.BookingStatus == "Ongoing")? "blue" : "red"),
+                    color = (item.BookingStatus == "Active"? "#3b82f5" : (item.BookingStatus == "Ongoing")? "green" : "red"),
                     allDay = false,
                     detail = item.Detail,
                     bookby = item.ApplicationUser.UserName,
