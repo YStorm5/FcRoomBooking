@@ -25,6 +25,12 @@ namespace FcRoomBooking.Controllers
             var list = dbContext.RoomBookings.Include(x => x.Room).Include(x => x.ApplicationUser).Where(x=>x.BookingStatus =="Active" || x.BookingStatus == "Ongoing").ToList();
             return View(list);
         }
+        [HttpGet("RoomBooking/{id}")]
+        public IActionResult Index(int id)
+        {
+            var list = dbContext.RoomBookings.Include(x => x.Room).Include(x => x.ApplicationUser).Where(x=>x.BookingStatus =="Active" || x.BookingStatus == "Ongoing").Where(x=>x.Id == id).ToList();
+            return View(list);
+        }
         public IActionResult Participant(int id)
         {
             var list = dbContext.Participants.Include(x=>x.ApplicationUser).ToList().FindAll(x => x.RoomBookingId == id);
@@ -43,7 +49,7 @@ namespace FcRoomBooking.Controllers
                 }
                 ViewBag.BookingId = id;
             }
-                return View(newlist);
+            return View(newlist);
 
         }
     }

@@ -1,4 +1,5 @@
 ﻿using FcRoomBooking.Areas.Identity.Data;
+using FcRoomBooking.Class;
 using FcRoomBooking.Models.Domain;
 using FcRoomBooking.Models.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +23,6 @@ namespace FcRoomBooking.Controllers
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
-        
         public IActionResult Index()
         {
             var user = userManager.GetUserId(User);

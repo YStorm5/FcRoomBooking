@@ -16,7 +16,7 @@
         </div>
     </div>
     </div>
-<div class="card" id="cardHover" style="width: 18rem;position:absolute;z-index:99999;display:none;border:1px black solid">
+<div class="card shadow" id="cardHover" style="width: 18rem;position:absolute;z-index:999;display:none;border-radius:10px;">
   <div class="card-body">
     <h5 class="card-title" id="title">Card title</h5>
     <div id="pText">Hello world</div>
@@ -63,10 +63,15 @@
             eventMouseEnter: function (info) {
                 var eventObj = info.event;
                 $('#cardHover').show();
+                $('#cardHover').css("border-bottom",`5px solid ${eventObj.borderColor}`);
                 $('#cardHover').offset({ top: info.jsEvent.pageY+30, left: info.jsEvent.pageX-100 });
-                $("#title").text(eventObj.start.toLocaleTimeString()+" - "+eventObj.end.toLocaleTimeString());
+                $("#title").text(eventObj.start.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'})+" - "+eventObj.end.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit'}));
                 $('#pText').html('<b>Subject: </b>'+eventObj.title+'<br><b>Detail: </b>'+eventObj.extendedProps.detail+'<br><b>Book By: </b>'+eventObj.extendedProps.bookby+'<br><b>Room: </b>'+eventObj.extendedProps.room);
                 
+            },
+            eventClick: function (info) {
+                var eventObj = info.event;
+                window.open(`/RoomBooking/${eventObj.id}`,"_self");
             },
             eventMouseLeave:function(info){
                 $('#cardHover').hide();
