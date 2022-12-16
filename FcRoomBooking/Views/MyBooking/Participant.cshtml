@@ -46,7 +46,7 @@
                                 @item.Email
                             </td>
                             <td>
-                                <a class="btn btn-outline-danger p-2" asp-controller="MyBooking" asp-action="Remove" asp-route-url="@item.RoomBookingId" asp-route-id="@item.Username">Remove</a>
+                                <a class="btn btn-outline-danger p-2" asp-controller="MyBooking" asp-action="Remove" asp-route-url="@item.RoomBookingId" asp-route-id="@item.userId">Remove</a>
                             </td>
                         </tr>
                         no++;
@@ -81,7 +81,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="summit" class="btn btn-primary">Invite</button>
+                    <button type="submit" class="btn btn-primary">Invite</button>
                 </div>
             </form>
 
@@ -105,7 +105,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                    <button type="summit" class="btn btn-primary">Yes</button>
+                    <button type="submit" class="btn btn-primary">Yes</button>
                 </div>
             </form>
 
@@ -128,7 +128,7 @@
     if (TempData["isInvited"] != null) {
         <script>
             $.toast({
-            text: "Invite Successfully!", // Text that is to be shown in the toast
+            text: "Invite Successfully!", 
             heading: 'Invite Participant', // Optional heading to be shown on the toast
             icon: 'success', // Type of toast icon
             showHideTransition: 'fade', // fade, slide or plain

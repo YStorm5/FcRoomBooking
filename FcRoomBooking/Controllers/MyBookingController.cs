@@ -90,6 +90,7 @@ namespace FcRoomBooking.Controllers
                         RoomBookingId = id,
                         Username = item.ApplicationUser.UserName,
                         Email = item.ApplicationUser.Email,
+                        userId = item.UserId
                         
                     });
                 }
@@ -180,11 +181,12 @@ namespace FcRoomBooking.Controllers
                 return RedirectToAction("Create");
             }
         }
-        public async Task<IActionResult> Remove(string id,int url)
+        [HttpGet]
+        public IActionResult Remove(string id,int url)
         {
-            var user = await dbContext.Participants.FirstOrDefaultAsync(x=>x.ApplicationUser.UserName== id);
+            var user = dbContext.Participants.First(x=>x.UserId == id);
             dbContext.Participants.Remove(user);
-            await dbContext.SaveChangesAsync();
+            dbContext.SaveChanges();
             TempData["isRemoved"] = true;
             return RedirectToAction("Participant",new {id=url});
         }
