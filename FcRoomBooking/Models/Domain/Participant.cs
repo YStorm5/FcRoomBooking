@@ -1,5 +1,4 @@
-﻿using FcRoomBooking.Areas.Identity.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcRoomBooking.Models.Domain
@@ -14,6 +13,5 @@ namespace FcRoomBooking.Models.Domain
         [ForeignKey("RoomBooking")]
         public int RoomBookingId { get; set; }
         public RoomBooking RoomBooking { get; set; }
-        
     }
 }

@@ -4,7 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
-using FcRoomBooking.Areas.Identity.Data;
+using FcRoomBooking.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

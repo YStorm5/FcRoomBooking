@@ -22,7 +22,7 @@ namespace FcRoomBooking.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("FcRoomBooking.Areas.Identity.Data.ApplicationUser", b =>
+            modelBuilder.Entity("FcRoomBooking.Models.Domain.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -89,16 +89,15 @@ namespace FcRoomBooking.Migrations
 
             modelBuilder.Entity("FcRoomBooking.Models.Domain.Participant", b =>
                 {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("RoomBookingId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.HasKey("UserId", "RoomBookingId");
 
                     b.HasIndex("RoomBookingId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Participants");
                 });
@@ -115,16 +114,18 @@ namespace FcRoomBooking.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoomDescription")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("RoomImage")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("RoomName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoomStatusId")
+                    b.Property<int?>("RoomStatusId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -146,7 +147,6 @@ namespace FcRoomBooking.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("BookingStatus")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("BookingTo")
@@ -156,6 +156,9 @@ namespace FcRoomBooking.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomStatusID")
                         .HasColumnType("int");
 
                     b.Property<string>("Subject")
@@ -169,6 +172,8 @@ namespace FcRoomBooking.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("RoomStatusID");
 
                     b.HasIndex("UserId");
 
@@ -184,7 +189,6 @@ namespace FcRoomBooking.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Status")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -199,6 +203,10 @@ namespace FcRoomBooking.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -217,6 +225,8 @@ namespace FcRoomBooking.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -329,16 +339,23 @@ namespace FcRoomBooking.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FcRoomBooking.Models.Domain.ApplicationRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
+
+                    b.HasDiscriminator().HasValue("ApplicationRole");
+                });
+
             modelBuilder.Entity("FcRoomBooking.Models.Domain.Participant", b =>
                 {
                     b.HasOne("FcRoomBooking.Models.Domain.RoomBooking", "RoomBooking")
-                        .WithMany()
+                        .WithMany("Participant")
                         .HasForeignKey("RoomBookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FcRoomBooking.Areas.Identity.Data.ApplicationUser", "ApplicationUser")
-                        .WithMany()
+                    b.HasOne("FcRoomBooking.Models.Domain.ApplicationUser", "ApplicationUser")
+                        .WithMany("Participant")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -352,9 +369,7 @@ namespace FcRoomBooking.Migrations
                 {
                     b.HasOne("FcRoomBooking.Models.Domain.RoomStatus", "RoomStatus")
                         .WithMany()
-                        .HasForeignKey("RoomStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoomStatusId");
 
                     b.Navigation("RoomStatus");
                 });
@@ -362,12 +377,18 @@ namespace FcRoomBooking.Migrations
             modelBuilder.Entity("FcRoomBooking.Models.Domain.RoomBooking", b =>
                 {
                     b.HasOne("FcRoomBooking.Models.Domain.Room", "Room")
-                        .WithMany()
+                        .WithMany("RoomBooking")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FcRoomBooking.Areas.Identity.Data.ApplicationUser", "ApplicationUser")
+                    b.HasOne("FcRoomBooking.Models.Domain.RoomStatus", "RoomStatus")
+                        .WithMany()
+                        .HasForeignKey("RoomStatusID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FcRoomBooking.Models.Domain.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -376,6 +397,8 @@ namespace FcRoomBooking.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Room");
+
+                    b.Navigation("RoomStatus");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -389,7 +412,7 @@ namespace FcRoomBooking.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("FcRoomBooking.Areas.Identity.Data.ApplicationUser", null)
+                    b.HasOne("FcRoomBooking.Models.Domain.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,7 +421,7 @@ namespace FcRoomBooking.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("FcRoomBooking.Areas.Identity.Data.ApplicationUser", null)
+                    b.HasOne("FcRoomBooking.Models.Domain.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -413,7 +436,7 @@ namespace FcRoomBooking.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FcRoomBooking.Areas.Identity.Data.ApplicationUser", null)
+                    b.HasOne("FcRoomBooking.Models.Domain.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -422,11 +445,26 @@ namespace FcRoomBooking.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("FcRoomBooking.Areas.Identity.Data.ApplicationUser", null)
+                    b.HasOne("FcRoomBooking.Models.Domain.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FcRoomBooking.Models.Domain.ApplicationUser", b =>
+                {
+                    b.Navigation("Participant");
+                });
+
+            modelBuilder.Entity("FcRoomBooking.Models.Domain.Room", b =>
+                {
+                    b.Navigation("RoomBooking");
+                });
+
+            modelBuilder.Entity("FcRoomBooking.Models.Domain.RoomBooking", b =>
+                {
+                    b.Navigation("Participant");
                 });
 #pragma warning restore 612, 618
         }

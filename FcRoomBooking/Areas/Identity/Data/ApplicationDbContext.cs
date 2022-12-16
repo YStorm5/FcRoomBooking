@@ -1,5 +1,4 @@
-﻿using FcRoomBooking.Areas.Identity.Data;
-using FcRoomBooking.Models.Domain;
+﻿using FcRoomBooking.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +15,23 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<RoomBooking> RoomBookings { get; set; }
     public DbSet<Participant> Participants { get; set; }
     public DbSet<RoomStatus> RoomStatus { get; set; }
+    public DbSet<ApplicationUser> ApplicationUser { get; set; }
+    public DbSet<ApplicationRole> ApplicationRole { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Participant>()
+            .HasKey(t => new { t.UserId, t.RoomBookingId });
+        builder.Entity<Participant>()
+            .HasOne(pt => pt.ApplicationUser)
+            .WithMany(p => p.Participant)
+            .HasForeignKey(p => p.UserId);
+        builder.Entity<Participant>()
+            .HasOne(pt => pt.RoomBooking)
+            .WithMany(p => p.Participant)
+            .HasForeignKey(p => p.RoomBookingId);
+
         base.OnModelCreating(builder);
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
+        
     }
 }

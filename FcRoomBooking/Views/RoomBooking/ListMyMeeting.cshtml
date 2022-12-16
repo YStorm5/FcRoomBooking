@@ -1,0 +1,82 @@
+﻿@model List<FcRoomBooking.Models.Domain.RoomBooking>
+@*@model FcRoomBooking.ViewModel.MyMeetingViewModel*@
+@{
+    Layout = "_LayoutAdmin";
+}
+
+    <div>
+        <span style="font-size:20px; font-weight:bold">Booking</span>
+        <a class="btn btn-outline-success float-right" asp-controller="RoomBooking" asp-action="CreateMyMeeting">Create New</a>
+    </div>
+    <div class="table-responsive pt-3">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    @*<th>
+                        No#
+                    </th>*@
+                    <th>
+                        Room Name
+                    </th>
+                    <th>
+                        Subject
+                    </th>
+                    @*<th>
+                        Detail
+                    </th>*@
+                    <th>
+                        Start
+                    </th>
+                    <th>
+                        End
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var schedule in Model)
+                    {
+                        
+                <tr>
+                   
+                   
+                         
+                             
+                            @*<td>
+                                   
+                            </td>*@
+                            <td>
+                                @schedule.Room.RoomName
+                            </td>
+                            <td>
+                                @schedule.Subject
+                            </td>
+                            <td>
+                                @schedule.BookingFrom
+                            </td>
+                            <td>
+                                @schedule.BookingTo
+                            </td>
+                            <td>
+                                @schedule.RoomStatus?.Status
+                            </td>
+
+                            <td>
+                                <a class="btn btn-outline-primary p-2" asp-controller="RoomBooking" asp-action="EditMyMeeting" asp-route-id="@schedule.Id">Edit</a>
+                                <a class="btn btn-outline-success p-2" asp-controller="RoomBooking" asp-action="ViewMeetingDetail" asp-route-id="@schedule.Id">View</a>
+                                
+                            </td>
+                           
+                </tr>
+               
+                }
+            </tbody>
+        </table>
+
+    </div>
+

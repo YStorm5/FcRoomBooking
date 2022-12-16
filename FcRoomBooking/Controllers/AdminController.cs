@@ -7,11 +7,11 @@ namespace FcRoomBooking.Controllers
     [Authorize]
     public class AdminController : Controller
     {
-        private readonly ApplicationDbContext dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
         public AdminController(ApplicationDbContext dbContext)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
         }
         public IActionResult Index()
         {
