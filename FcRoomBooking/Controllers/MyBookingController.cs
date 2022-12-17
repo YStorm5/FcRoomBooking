@@ -155,6 +155,7 @@ namespace FcRoomBooking.Controllers
             DateTime dateFrom = DateTime.Parse(Request.BookingFrom +" "+ Request.BookingFromTime);
             DateTime dateTo = DateTime.Parse(Request.BookingTo + " " + Request.BookingToTime);
             var user = await userManager.GetUserAsync(User);
+            
             var check = await dbContext.RoomBookings.FirstOrDefaultAsync(x => x.BookingFrom <= dateTo && x.BookingTo >= dateFrom && x.RoomId == Request.RoomId && x.BookingStatus == "Active");
             if(check == null)
             {
@@ -170,10 +171,20 @@ namespace FcRoomBooking.Controllers
                     BookingStatus = "Active"
                 });
                 dbContext.SaveChanges();
-                TempData["isCreated"] = true;
                 var room = dbContext.RoomBookings.FirstOrDefaultAsync(x => x.RoomId == Request.RoomId && x.UserId == user.Id && x.BookingFrom == dateFrom && x.BookingTo == dateTo && x.Subject == Request.Subject).Result;
-                TempData["RoomBookingId"] = room.Id;
-                return RedirectToAction("Create");
+
+                foreach (var item in Request.participantViewModel.ParticipantId)
+                {
+                    dbContext.Participants.Add(new Participant
+                    {
+                        UserId = item,
+                        RoomBookingId = room.Id,
+                    });
+
+                }
+                dbContext.SaveChanges();
+                TempData["isCreated"] = true;
+                return RedirectToAction("Index", new {filter="active"});
             }
             else
             {

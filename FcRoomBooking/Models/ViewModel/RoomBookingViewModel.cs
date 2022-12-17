@@ -19,5 +19,7 @@ namespace FcRoomBooking.Models.ViewModel
         public string? BookingFromTime { get; set; }
         public string? BookingToTime { get; set; }
         public List<ParticipantViewModel>? Participants { get; set; }
+        public ParticipantViewModel? participantViewModel { get; set; }
+
     }
 }

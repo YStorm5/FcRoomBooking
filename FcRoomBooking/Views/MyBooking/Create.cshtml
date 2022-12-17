@@ -43,27 +43,25 @@
                     </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label for="exampleInputUsername1">Subject</label>
+            
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label for="exampleInputUsername1">Subject</label>
                 <input type="text" class="form-control" id="exampleInputUsername1" asp-for="Subject" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="exampleInputUsername1">Invite Participant</label>
+                    <select class="form-control selectList" asp-items="@ViewBag.partList" multiple asp-for="participantViewModel.ParticipantId" required>
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label for="exampleInputUsername1">Detail</label>
                 <textarea class="form-control" style="height:100px" id="exampleInputUsername1" asp-for="Detail" required></textarea>
             </div>
-            @{
-                if (TempData["isCreated"] == null)
-                {
+           
                     <button type="submit" class="btn btn-primary mr-2">Submit</button>
                     <a class="btn btn-light" asp-controller="MyBooking" asp-action="index">Cancel</a>
-                }
-                else
-                {
-                    <button class="btn btn-outline-success" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Invite</button>
-                    <a class="btn btn-light" asp-controller="MyBooking" asp-action="index">Invite Later</a>
-                }
-            }
             
         </form>
     </div>
@@ -98,22 +96,7 @@
 
 <partial name="_ChosenPartial" />
 @{
-    if (TempData["isCreated"] != null)
-    {
-        <script>
-            $.toast({
-                text: "Create Successfully!", // Text that is to be shown in the toast
-                heading: 'Create Booking', // Optional heading to be shown on the toast
-                icon: 'success', // Type of toast icon
-                showHideTransition: 'fade', // fade, slide or plain
-                allowToastClose: true, // Boolean value true or false
-                hideAfter: 2000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
-                stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
-                position: 'top-center', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
-                textAlign: 'left',  // Text alignment i.e. left, right or center
-            });
-        </script>
-    }
+    
     if (TempData["notAvailable"] != null)
     {
         <script>
