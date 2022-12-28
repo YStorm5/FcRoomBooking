@@ -1,0 +1,12 @@
+﻿@model FcRoomBooking.Models.ViewModel.RoleViewModel;
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@if (ViewBag.Message != null)
+{
+    var type = @ViewBag.type;
+    <div class="alert alert-@type alert-dismissible" role="alert">
+        <button type="hidden" data-bs-dismiss="alert"></button>
+      @ViewBag.Message
+    </div>
+}
