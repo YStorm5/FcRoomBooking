@@ -1,4 +1,5 @@
 ﻿@model List<FcRoomBooking.Models.Domain.RoomBooking>
+@*@model FcRoomBooking.ViewModel.MyMeetingViewModel*@
 @{
     Layout = "_LayoutAdmin";
 }
@@ -12,6 +13,9 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    @*<th>
+                        No#
+                    </th>*@
                     <th>
                         #
                     </th>
@@ -46,18 +50,43 @@
                     int no = 1;
                 }
                 <tr>
-                    @foreach(var schedule in Model)
+                @foreach(var schedule in Model)
                     {
                         <td>
-
-                        </td>
+                        
+                <tr>
+                   
+                   
+                         
+                             
+                            @*<td>
+                                   
+                            </td>*@
+                            <td>
+                                @schedule.Room.RoomName
+                            </td>
+                            <td>
+                                @schedule.Subject
+                            </td>
+                            <td>
+                                @schedule.BookingFrom
+                            </td>
+                            <td>
+                                @schedule.BookingTo
+                            </td>
+                            <td>
+                                @schedule.RoomStatus?.Status
+                            </td>
                     }
-                    
-                    <td>
+
+                            <td>
                         <a class="btn btn-outline-primary p-2" asp-controller="RoomBooking" asp-action="Edit">Edit</a>
                         <a class="btn btn-outline-info p-2" asp-controller="Payment" asp-action="Show">View</a>
-                    </td>
+                            </td>
+                           
                 </tr>
+               
+                }
             </tbody>
         </table>
 

@@ -52,5 +52,75 @@ namespace FcRoomBooking.Controllers
             return View(newlist);
 
         }
+        [HttpPost]
+        public async Task<IActionResult> CreateRoom(Room room, List<IFormFile> image)
+        {
+            if (!ModelState.IsValid)
+            {
+                foreach (var item in image)
+                {
+                    if (item.Length > 0)
+                    {
+                        using (var stream = new MemoryStream())
+                        {
+                            await item.CopyToAsync(stream);
+                            room.RoomImage = stream.ToArray();
+                        }
+                    }
+                }
+
+                await _applicationDbContext.Rooms.AddAsync(room);
+                await _applicationDbContext.SaveChangesAsync();
+
+                return RedirectToAction("CreateRoom");
+            }
+            return View(room);
+        }
+        public IActionResult ListRoom()
+        {
+            var Room = _applicationDbContext.Rooms.ToList();
+            return View(Room);
+        }
+        [HttpGet]
+        public async Task<IActionResult> UpdateRoom(int id)
+        {
+            var room = await _applicationDbContext.Rooms.FirstOrDefaultAsync(x => x.Id == id);
+            return View(room);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateRoom(Room model)
+        {
+            var room = await _applicationDbContext.Rooms.FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (model.image != null)
+            {
+                if (model.image.Length > 0)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        await model.image.CopyToAsync(stream);
+                        model.RoomImage = stream.ToArray();
+                    }
+                }
+            }
+            else
+            {
+                model.RoomImage = room?.RoomImage;
+            }
+            room.RoomImage = model.RoomImage;
+            room.RoomName = model.RoomName;
+            room.RoomDescription = model.RoomDescription;
+            _applicationDbContext.Rooms.Update(room);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction("ListRoom");
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteRoom(Room model)
+        {
+            var room = await _applicationDbContext.Rooms.FindAsync(model.Id);
+            _applicationDbContext.Rooms.Remove(room);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction("ListRoom");
+        }
     }
 }

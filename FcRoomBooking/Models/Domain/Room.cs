@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FcRoomBooking.Models.Domain
@@ -9,7 +10,9 @@ namespace FcRoomBooking.Models.Domain
         public int Id { get; set; }
         public string? RoomName { get; set; }
         public string? RoomCapacity { get; set; }
+        [Required]
         public string? RoomDescription { get; set; }
+        [Required]
         public byte[]? RoomImage { get; set; }
         [ForeignKey("RoomStatus")]
         public int? RoomStatusId { get; set; }
