@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using FcRoomBooking.Areas.Identity.Data;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 
 namespace FcRoomBooking.Models.Domain
 {
@@ -10,8 +8,7 @@ namespace FcRoomBooking.Models.Domain
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("RoomId")]
-        [InverseProperty("Room")]
+        [ForeignKey("Room")]
         public int RoomId { get; set; }
         public Room? Room { get; set; }
         [ForeignKey("ApplicationUser")]

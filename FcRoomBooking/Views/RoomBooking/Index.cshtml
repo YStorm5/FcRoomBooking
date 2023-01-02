@@ -1,11 +1,14 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     Layout = "_LayoutAdmin";
 }
 @using FcRoomBooking.Models.Domain
-@model List<RoomBooking>
+@using Microsoft.AspNetCore.Identity
+@using FcRoomBooking.Areas.Identity.Data
+@model FcRoomBooking.Models.ViewModel.CheckBookingViewModel
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var user = UserManager.GetUserId(User);
+}
 <div class="col-lg-12 d-flex flex-column grid-margin stretch-card bg-white p-4 rounded relative">
     <div>
         <span style="font-size:20px; font-weight:bold">Booking</span>
@@ -47,8 +50,11 @@
                 @{
                     int no = 1;
                 }
-                @foreach (var item in Model)
+                @foreach (var item in Model.RoomBooking)
                 {
+                   
+                        
+                    
                     <tr>
                         <td>
                             @no
@@ -75,26 +81,44 @@
                             @{
                                 if(item.BookingStatus == "Active")
                                 {
-                                    <div class="badge badge-primary badge-pill">@item.BookingStatus</div>
+                                        <div class="badge badge-primary badge-pill">@item.BookingStatus</div>
                                 }
                                 else if(item.BookingStatus == "Ongoing")
                                 {
-                                    <div class="badge badge-success badge-pill">@item.BookingStatus</div>
+                                        <div class="badge badge-success badge-pill">@item.BookingStatus</div>
                                 }
                                 else if(item.BookingStatus == "Finish")
                                 {
-                                    <div class="badge badge-info badge-pill">@item.BookingStatus</div>
+                                        <div class="badge badge-info badge-pill">@item.BookingStatus</div>
                                 }
                                 else
                                 {
-                                    <div class="badge badge-danger badge-pill">@item.BookingStatus</div>
+                                        <div class="badge badge-danger badge-pill">@item.BookingStatus</div>
                                 }
                             }
                         </td>
                         <td>
-                            <a class="btn btn-outline-info p-2" asp-controller="RoomBooking" asp-action="Participant" asp-route-id="@item.Id">Participant</a>
+                            <a class="btn btn-outline-success p-2 mb-1" asp-controller="RoomBooking" asp-action="Participant" asp-route-id="@item.Id">Participant</a>
+                             @foreach(var person in Model.Participant)
+                             {
+                                @if(user == person.UserId && person.RoomBookingId == item.Id){
+                                    @if(person.IsExcept != null)
+                                    {
+                                        <br>
+                                        <a class="btn btn-outline-info p-2" asp-controller="RoomBooking" asp-action="Responce" asp-route-id="@item.Id">Responce</a>
+                                    }
+                                    else
+                                    {
+                                        <br>
+                                        <a class="btn btn-outline-warning p-2" asp-controller="RoomBooking" asp-action="Responce" asp-route-id="@item.Id">Responce</a>
+                                    }
+
+                        }
+                            }
+                            
                         </td>
                     </tr>
+                    
                     no++;
                 }
             </tbody>
@@ -102,5 +126,4 @@
 
     </div>
 </div>
-
-
+<partial name="_MessagePartail" />

@@ -6,7 +6,6 @@ namespace FcRoomBooking.Models.Domain
     {
         [Key]
         public int Id { get; set; }
-        public string? Status { get; set; }
-
+        public string Status { get; set; }
     }
 }

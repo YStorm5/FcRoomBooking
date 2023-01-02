@@ -1,4 +1,5 @@
-﻿using FcRoomBooking.Models.Domain;
+﻿using FcRoomBooking.Areas.Identity.Data;
+using FcRoomBooking.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<RoomStatus> RoomStatus { get; set; }
     public DbSet<ApplicationRole> ApplicationRole { get; set; }
     public DbSet<ApplicationUser> ApplicationUser { get; set; }
+    public DbSet<Email> Email { get; set; }
+    public DbSet<AddUser> AddUser { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -28,6 +31,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         //    .HasForeignKey(p => p.RoomBookingId);
 
         base.OnModelCreating(builder);
-        
+        // Customize the ASP.NET Identity model and override the defaults if needed.
+        // For example, you can rename the ASP.NET Identity table names and more.
+        // Add your customizations after calling base.OnModelCreating(builder);
     }
 }

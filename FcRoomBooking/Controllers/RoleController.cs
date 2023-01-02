@@ -48,8 +48,10 @@ namespace FcRoomBooking.Controllers
         {
             ApplicationRole role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == model.Id);
             role.Name = model.Name;
-            await _roleManager.UpdateAsync(role);
-            
+            await _roleManager.UpdateAsync(role); 
+            TempData["type"] = "info";
+            TempData["Message"] = "The role you selected has been updated successfully!";
+
             return RedirectToAction("Index");
         }
         [HttpPost]

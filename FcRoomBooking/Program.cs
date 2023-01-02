@@ -34,12 +34,6 @@ builder.Services.AddAuthorization(options => {
 });
 
 
-//builder.Services.AddIdentity<ApplicationUser, ApplicationRole>().AddDefaultTokenProviders()
-//    .AddUserManager<UserManager<ApplicationUser>>()
-//    .AddEntityFrameworkStores<ApplicationDbContext>()
-//    .AddDefaultTokenProviders()
-//    .AddDefaultUI();
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
