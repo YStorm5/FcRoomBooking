@@ -89,12 +89,20 @@ namespace FcRoomBooking.Migrations
 
             modelBuilder.Entity("FcRoomBooking.Models.Domain.Participant", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<int>("RoomBookingId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("RoomBookingId");
 
@@ -124,7 +132,8 @@ namespace FcRoomBooking.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoomStatusId")
+                    b.Property<int?>("RoomStatusId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
