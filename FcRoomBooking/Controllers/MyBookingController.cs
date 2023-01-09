@@ -1,5 +1,6 @@
-﻿using FcRoomBooking.Areas.Identity.Data;
+using FcRoomBooking.Areas.Identity.Data;
 using FcRoomBooking.Class;
+using FcRoomBooking.Constants;
 using FcRoomBooking.Models.Domain;
 using FcRoomBooking.Models.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -18,9 +19,9 @@ namespace FcRoomBooking.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly RoleManager<ApplicationRole> roleManager;
 
-        public MyBookingController(ApplicationDbContext dbContext,UserManager<ApplicationUser> userManager,RoleManager<IdentityRole> roleManager)
+        public MyBookingController(ApplicationDbContext dbContext,UserManager<ApplicationUser> userManager,RoleManager<ApplicationRole> roleManager)
         {
             this.dbContext = dbContext;
             this.userManager = userManager;
@@ -39,6 +40,8 @@ namespace FcRoomBooking.Controllers
             var list = dbContext.RoomBookings.Include(x=>x.Room).Include(x=>x.ApplicationUser).Where(x=>x.UserId == user && x.BookingStatus == filter).ToList();
             return View(list);
         }
+
+        [Authorize(Permissions.Booking.Create)]
         [HttpGet("MyBooking/Create")]
         public IActionResult Create(string? date)
         {
@@ -121,6 +124,7 @@ namespace FcRoomBooking.Controllers
                         RoomBookingId = id,
                         Username = item.ApplicationUser.UserName,
                         Email = item.ApplicationUser.Email,
+
                         userId = item.UserId,
                         
                     });
@@ -160,6 +164,8 @@ namespace FcRoomBooking.Controllers
             TempData["isInvited"] = true;
             return RedirectToAction("Participant",new {id=id});
         }
+        
+        [Authorize(Permissions.Booking.Edit)]
         public IActionResult Edit(int id)
         {
             var room = dbContext.RoomBookings.FirstOrDefault(x=>x.Id == id);
@@ -180,7 +186,9 @@ namespace FcRoomBooking.Controllers
             };
             return View(newRoom);
         }
-        [HttpPost]
+
+        [HttpPost, Authorize(Permissions.Booking.Edit)]
+
         public async Task<IActionResult> Post(RoomBookingViewModel Request)
         {
             DateTime dateFrom = DateTime.Parse(Request.BookingFrom +" "+ Request.BookingFromTime);
@@ -232,7 +240,8 @@ namespace FcRoomBooking.Controllers
             TempData["isRemoved"] = true;
             return RedirectToAction("Participant",new {id=url});
         }
-        [HttpPost]
+
+        [HttpPost, Authorize(Permissions.Booking.Delete)]
         public IActionResult Update(RoomBookingViewModel Request,int id,string? isCancel)
         {
             var booking = dbContext.RoomBookings.FirstOrDefault(x=>x.Id == id);
@@ -270,6 +279,7 @@ namespace FcRoomBooking.Controllers
                 return NotFound();
             }
         }
+        
         public IActionResult Delete(int id)
         {
             return View();

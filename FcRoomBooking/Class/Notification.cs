@@ -14,6 +14,7 @@ namespace FcRoomBooking.Class
         private readonly ApplicationDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
 
+
         public Notification(ApplicationDbContext dbContext,UserManager<ApplicationUser> userManager)
         {
             this.dbContext = dbContext;
@@ -35,6 +36,7 @@ namespace FcRoomBooking.Class
                         bookingTo = item.RoomBooking.BookingTo,
                         roomNumber = item.RoomBooking.Room.RoomName,
                         id= item.RoomBooking.Id,
+
                     });
                 }
                 return notificationList;

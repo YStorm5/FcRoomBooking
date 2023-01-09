@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "_LayoutAdmin";
 }
 @using FcRoomBooking.Models.ViewModel
@@ -20,7 +20,9 @@
                     <th>
                         Email
                     </th>
-                   
+                   <th>
+                        Status
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -41,7 +43,24 @@
                             <td>
                                 @item.Email
                             </td>
-                            
+
+                            <td>
+                                @if(item.IsExcept == true)
+                                {
+                                    <div class="badge badge-success badge-pill">Participated</div>
+                                }
+                                else if(item.IsExcept == false)
+                                {
+                                     <a href="#"  data-bs-toggle="modal" data-bs-target="@("#DetailTeam-"+item.Id)"><div class="badge badge-warning badge-pill">Not Avilable</div></a>
+                                    @* <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="@("#DetailTeam-"+item.Id)">Detail</button>*@
+                                     @await Html.PartialAsync("_ReasonPartialView", item)
+                                }
+                                else
+                                {
+                                   <div class="badge badge-secondary badge-pill">No Responce</div>
+                                }
+                                
+                            </td>
                         </tr>
                         no++;
                     }
@@ -57,10 +76,3 @@
 
     </div>
 </div>
-
-
-
-
-
-
-

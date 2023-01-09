@@ -1,4 +1,7 @@
-﻿@{
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@using FcRoomBooking.Constants
+@{
     Layout = "_LayoutAdmin";
 }
 @using FcRoomBooking.Models.Domain
@@ -25,7 +28,11 @@
             </div>
             </div>
         </div>
-        <a class="btn btn-outline-success float-right" asp-controller="MyBooking" asp-action="Create">Create New</a>
+
+        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Booking.Create)).Result.Succeeded)
+        {
+            <a class="btn btn-outline-success float-right" asp-controller="MyBooking" asp-action="Create">Create New</a>
+        }
     </div>
     <div class="table-responsive pt-3">
         <table class="table table-bordered">
@@ -109,7 +116,12 @@
                             }
                         </td>
                         <td>
-                            <a class="btn btn-outline-primary p-2" asp-controller="MyBooking" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+
+                            @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Booking.Edit)).Result.Succeeded)
+                            {
+                               <a class="btn btn-outline-primary p-2" asp-controller="MyBooking" asp-action="Edit" asp-route-id="@item.Id">Edit</a>   
+                            }
+        
                             <a class="btn btn-outline-info p-2" asp-controller="MyBooking" asp-action="Participant" asp-route-id="@item.Id">Participant</a>
                         </td>
                     </tr>
